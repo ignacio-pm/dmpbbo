@@ -281,7 +281,7 @@ void DmpWithGainSchedules::train(const Trajectory& trajectory, std::string save_
   }
 }
 
-/*
+
 void DmpWithGainSchedules::getSelectableParameters(set<string>& selectable_values_labels) const {
   
   Dmp::getSelectableParameters(selectable_values_labels);
@@ -340,40 +340,41 @@ void DmpWithGainSchedules::setSelectedParameters(const set<string>& selected_val
 void DmpWithGainSchedules::getParameterVectorMask(const std::set<std::string> selected_values_labels, Eigen::VectorXi& selected_mask) const
 {
   Dmp::getParameterVectorMask(selected_values_labels,selected_mask);
-// assert(function_approximators_gains_.size()>0);
-// for (int dd=0; dd<dim_orig(); dd++)
-// {
-//   assert(function_approximators_gains_[dd]!=NULL);
-//   assert(function_approximators_gains_[dd]->isTrained());
-// }
-//
-// selected_mask.resize(getParameterVectorAllSize());
-// 
-// int offset = 0;
-// VectorXi cur_mask;
-// for (int dd=0; dd<dim_orig(); dd++)
-// {
-//   function_approximators_gains_[dd]->getParameterVectorMask(selected_values_labels,cur_mask);
-//
-//   // This makes sure that the indices for each function approximator are different    
-//   int mask_offset = selected_mask.maxCoeff(); 
-//   for (int ii=0; ii<cur_mask.size(); ii++)
-//     if (cur_mask[ii]!=0)
-//       cur_mask[ii] += mask_offset;
-//       
-//   selected_mask.segment(offset,cur_mask.size()) = cur_mask;
-//   offset += cur_mask.size();
-//   
-//   offset++;
-//   
-// }
-// assert(offset == getParameterVectorAllSize());
-// 
-// // Replace TMP_GOAL_NUMBER with current max value
-// int goal_number = selected_mask.maxCoeff() + 1; 
-// for (int ii=0; ii<selected_mask.size(); ii++)
-//   if (selected_mask[ii]==TMP_GOAL_NUMBER)
-//     selected_mask[ii] = goal_number;
+  assert(function_approximators_gains_.size()>0);
+  for (int dd=0; dd<dim_orig(); dd++)
+  {
+    assert(function_approximators_gains_[dd]!=NULL);
+    assert(function_approximators_gains_[dd]->isTrained());
+  }
+
+  selected_mask.resize(getParameterVectorAllSize());
+
+  const int TMP_GOAL_NUMBER = -1;
+  int offset = 0;
+  VectorXi cur_mask;
+  for (int dd=0; dd<dim_orig(); dd++)
+  {
+    function_approximators_gains_[dd]->getParameterVectorMask(selected_values_labels,cur_mask);
+
+    // This makes sure that the indices for each function approximator are different    
+    int mask_offset = selected_mask.maxCoeff(); 
+    for (int ii=0; ii<cur_mask.size(); ii++)
+      if (cur_mask[ii]!=0)
+        cur_mask[ii] += mask_offset;
+        
+    selected_mask.segment(offset,cur_mask.size()) = cur_mask;
+    offset += cur_mask.size();
+    
+    offset++;
+    
+  }
+  assert(offset == getParameterVectorAllSize());
+
+  // Replace TMP_GOAL_NUMBER with current max value
+  int goal_number = selected_mask.maxCoeff() + 1; 
+  for (int ii=0; ii<selected_mask.size(); ii++)
+    if (selected_mask[ii]==TMP_GOAL_NUMBER)
+      selected_mask[ii] = goal_number;
     
 }
 
@@ -422,8 +423,6 @@ void DmpWithGainSchedules::setParameterVectorAll(const VectorXd& values)
   Dmp::setParameterVectorAll(values);
   
 }
-
-*/
 
 
 }
