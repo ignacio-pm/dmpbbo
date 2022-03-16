@@ -26,8 +26,8 @@ import matplotlib.pyplot as plt
 lib_path = os.path.abspath('../python/')
 sys.path.append(lib_path)
 
-from dmp_bbo.dmp_bbo_plotting import *
-from dmp.dmp_plotting import *
+# from dmp_bbo.dmp_bbo_plotting import *
+# from dmp.dmp_plotting import *
 
 
 if __name__=="__main__":
@@ -37,7 +37,7 @@ if __name__=="__main__":
     
     if len(sys.argv)<3:
         print('Usage: '+sys.argv[0]+' <cost vars file> <task pickle file>')
-        print('Example: python3 '+sys.argv[0]+' results/cost_vars_demonstrated.txt results/task.p')
+        print('Example: python3 '+sys.argv[0]+' results/cost_vars.txt results/task.p')
         sys.exit()
         
     if (len(sys.argv)>1):

@@ -31,6 +31,7 @@ import os, sys
 
 lib_path = os.path.abspath('../python')
 sys.path.append(lib_path)
+print(sys.path)
 from functionapproximators.functionapproximators_plotting import * 
 from dmp.dmp_plotting import * 
 

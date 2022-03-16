@@ -101,7 +101,9 @@ int main(int n_args, char** args)
   cout << endl;
   
   cout << "C++    |     Reading trajectory from file: " << input_trajectory_file << endl;
-  Trajectory trajectory = Trajectory::readFromFile(input_trajectory_file);
+  // n_dims_misc == n_dims_k_gains
+  int n_dims_misc = 7;
+  Trajectory trajectory = Trajectory::readFromFile(input_trajectory_file, n_dims_misc);
   if (trajectory.length()==0)
   {
     cerr << "ERROR: The file " << input_trajectory_file << " could not be found. Aborting." << endl << endl;
@@ -134,30 +136,40 @@ int main(int n_args, char** args)
   Dmp* dmp = new Dmp(n_dims, function_approximators, Dmp::KULVICIUS_2012_JOINING);
   dmp->set_name("trained");
 
+  int n_gains = trajectory.dim_misc();
+  // Clone the function approximator for each extra dimension of the DMP
+  vector<FunctionApproximator*> function_approximators_gains(n_gains);    
+  for (int dd=0; dd<n_gains; dd++)
+    function_approximators_gains[dd] = fa_lwr->clone();
+  
+  DmpWithGainSchedules* dmp_gains = new DmpWithGainSchedules(dmp,function_approximators_gains);
+
   cout << "C++    |     Training Dmp... (n_basis_functions=" << n_basis_functions << ")" << endl;
   bool overwrite = true;
-  dmp->train(trajectory,output_train_directory,overwrite);
+  dmp_gains->train(trajectory,output_train_directory,overwrite);
 
   // Set which parameters to optimize
-  dmp->setSelectedParameters(parameters_to_optimize);
+  dmp_gains->setSelectedParameters(parameters_to_optimize);
   
-  cout << "C++    |     Writing trained Dmp to XML file: " << output_dmp_file << endl;
+  cout << "C++    |     Writing trained Dmp with Impedance Gains to XML file: " << output_dmp_file << endl;
   std::ofstream ofs(output_dmp_file);
   boost::archive::xml_oarchive oa(ofs);
-  oa << boost::serialization::make_nvp("dmp",dmp);
+  oa << boost::serialization::make_nvp("dmp",dmp_gains);
   ofs.close();
   
   // Save the initial parameter vector to file
   Eigen::VectorXd parameter_vector;
-  dmp->getParameterVectorSelected(parameter_vector);
+  dmp_gains->getParameterVectorSelected(parameter_vector);
   overwrite = true;
   cout << "C++    |     Writing initial parameter vector to file : " << output_parameters_file << endl;
   saveMatrix(output_parameters_file,parameter_vector,overwrite);
   
+  cout << "C++    |     Finished Training" << endl;
     
   delete meta_parameters;
   delete fa_lwr;
   delete dmp;
+  delete dmp_gains;
 
   return 0;
 }

@@ -26,7 +26,7 @@ import inspect
 lib_path = os.path.abspath('../python')
 sys.path.append(lib_path)
 
-from TaskThrowBall import TaskThrowBall
+from TaskPickTool import TaskPickTool
 
 
 if __name__=="__main__":
@@ -41,11 +41,8 @@ if __name__=="__main__":
     if (len(sys.argv)>1):
         output_task_file = sys.argv[1]
 
-    x_goal = -0.70
-    x_margin = 0.01
-    y_floor = -0.3
-    acceleration_weight = 0.001
-    task = TaskThrowBall(x_goal,x_margin,y_floor,acceleration_weight)
+    weights = [0.6, 0.2, 0.1, 0.1]
+    task = TaskPickTool(weights)
     
     # Save the task instance itself
     print('  * Saving task to file "'+output_task_file+"'")

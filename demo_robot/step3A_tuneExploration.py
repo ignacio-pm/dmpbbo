@@ -45,7 +45,7 @@ if __name__=="__main__":
     if (len(sys.argv)>3):
         output_directory = sys.argv[3]
     
-    sigma = 1.0
+    sigma = 0.3
     if (len(sys.argv)>3):
         sigma = float(sys.argv[4])
         

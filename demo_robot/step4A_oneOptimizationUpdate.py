@@ -51,8 +51,8 @@ if __name__=="__main__":
     covar_decay_factor = 0.9
     updater_decay = UpdaterCovarDecay(eliteness,weighting_method,covar_decay_factor)
     
-    min_level = 0.3
-    max_level = 3.0
+    min_level = 0.1
+    max_level = 1.0
     diag_only = False
     learning_rate=0.5
     #updater = UpdaterCovarAdaptation(eliteness, weighting_method)
