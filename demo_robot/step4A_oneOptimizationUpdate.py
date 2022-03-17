@@ -51,8 +51,8 @@ if __name__=="__main__":
     covar_decay_factor = 0.9
     updater_decay = UpdaterCovarDecay(eliteness,weighting_method,covar_decay_factor)
     
-    min_level = 0.1
-    max_level = 1.0
+    min_level = 0.3
+    max_level = 6.0
     diag_only = False
     learning_rate=0.5
     #updater = UpdaterCovarAdaptation(eliteness, weighting_method)
@@ -73,7 +73,7 @@ if __name__=="__main__":
     initial_distribution = DistributionGaussian(mean_init, covar_init)
 
     # Load the task
-    task = pickle.load(open(directory+'/task.p', "rb" ))
+    task = pickle.load(open(directory+'/taskPickTool.p', "rb" ))
     
     # Execute one update
     i_update = runOptimizationTaskOneUpdate(directory, task, initial_distribution, updater, n_samples_per_update)

@@ -29,8 +29,10 @@ do
 
   echo "bash   | Calling rosrun returnToInitial $CUR_DIR/trajectory.txt"
   rosrun franka_tool_handover returnToInitial $CUR_DIR/trajectory.txt
-  rosrun franka_tool_handover handPub close
+  rosrun franka_tool_handover plot_trajectories.py cost_vars $CUR_DIR
 
-  sleep 3
+  sleep 6
+  echo "bash   | Calling rosrun franka_tool_handover handPub close"
+  rosrun franka_tool_handover handPub close
 
 done
