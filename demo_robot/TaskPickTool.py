@@ -21,18 +21,25 @@ class TaskPickTool(Task):
 
     def evaluateRollout(self,cost_vars,sample):
         n_time_steps = cost_vars.shape[0] - 1
-        max_time = 10
-        max_wrench = 6
-        max_acc = 2000
+        # This parameters are task dependent
+        max_time = 8.0
+        max_wrench = 100
+        max_acc = 3000
         
         ts = cost_vars[:-1,0]
         wrenches = cost_vars[:-1,1:1+self.n_dims_wrench] 
         accelerations = cost_vars[:-1,1+self.n_dims_wrench:1+self.n_dims_wrench+self.n_dims]
-        not_completion = cost_vars[-1,0]
-        time = n_time_steps
+        if cost_vars[-1,0] < max_time:
+            time = cost_vars[-1,0]
+            not_completion = 0
+        else: 
+            time = max_time
+            not_completion = 1
         
         sum_acc = np.sum(np.square(accelerations)) / n_time_steps
         sum_wrenches = np.sum(np.square(wrenches)) / n_time_steps
+        print(sum_acc)
+        print(max_acc)
             
         costs = np.zeros(1+4)
         costs[1] = self.weights_[0] * not_completion
@@ -47,22 +54,21 @@ class TaskPickTool(Task):
         t = cost_vars[:-1,0]
         wrenches = cost_vars[:-1,1:1+self.n_dims_wrench] 
         accelerations = cost_vars[:-1,1+self.n_dims_wrench:1+self.n_dims_wrench+self.n_dims]
-        sum_wrenches = np.sum(np.square(wrenches), axis=1) / np.sum(np.square(wrenches[0]))
-        sum_acc = np.sum(np.square(accelerations), axis=1) / np.sum(np.square(accelerations[0]))
-        print(np.sum(np.square(wrenches[0])))
-        print(np.sum(np.square(accelerations[0])))
+        sum_wrenches = np.sum(np.square(wrenches), axis=1) / np.mean(np.square(wrenches))
+        sum_acc = np.mean(np.square(accelerations), axis=1)
     
-        
-        line_handles = ax.plot(t, sum_wrenches,linewidth=0.5, label="Wrenches")
-        line_handles_acc = ax.plot(t, sum_acc, color='red', label="Torques")
+        # line_handles = ax.plot(t, sum_wrenches,linewidth=0.5, label="Wrenches")
+        colors = plt.cm.jet(np.linspace(0, 1, 100))
+        line_handles_acc = ax.plot(t, sum_acc, linewidth=0.5, color=colors[np.random.randint(100)])
 
-        line_handles.extend(line_handles_acc)
+        # line_handles.extend(line_handles_acc)
 
-        ax.axis('equal')
+        # ax.axis('equal')
         ax.set_xlabel('Time')
-        ax.set_ylabel('Variation')
-        ax.set_xlim([0.0, 5.0])
-        ax.set_ylim([-1.0, 4.0])
-        ax.legend()
+        ax.set_ylabel('Nm')
+        ax.set_ylim([0.0, 700.0])
+        ax.set_xlim([0.0, 13.6])
+        ax.set_title("Mean of the joint efforts  the rollouts")
+        # ax.legend()
             
-        return line_handles
+        return line_handles_acc

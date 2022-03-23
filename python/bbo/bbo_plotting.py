@@ -84,18 +84,23 @@ def plotLearningCurve(learning_curve,ax,costs_all=[],cost_labels=[]):
     if (len(costs_all)>0):
         # costs_all may also contain individual cost components. Only take
         # first one, because it represents the sum of the individual comps.
-        costs_all = np.atleast_2d(costs_all)[:,0]
-        ax.plot(costs_all,'.',color='gray')
+        costs_all_ = np.atleast_2d(costs_all)[:,0]
+        ax.plot(costs_all_,'.',color='gray')
         
     # Plot costs at evaluations 
     learning_curve = np.array(learning_curve)
     # Sum of cost components
     samples_eval = learning_curve[:,0]
     costs_eval = learning_curve[:,1:]
-    lines = ax.plot(samples_eval,costs_eval[:,0],'-',color='black',linewidth=2)
-    # Individual cost components
-    if costs_eval.shape[1]>1:
-        lines.extend(ax.plot(samples_eval,costs_eval[:,1:],'-',linewidth=1))
+    if len(costs_all_) % 5 == 0:
+        cost_mean = np.mean(np.atleast_2d(costs_all).reshape(-1, 5, 5), axis=1)
+        lines = ax.plot(samples_eval,cost_mean[:,0],'-',color='black',linewidth=2)
+        lines.extend(ax.plot(samples_eval,cost_mean[:,1:],'-',linewidth=1))
+    else:
+        lines = ax.plot(samples_eval,costs_eval[:,0],'-',color='black',linewidth=2)
+        # Individual cost components
+        if costs_eval.shape[1]>1:
+            lines.extend(ax.plot(samples_eval,costs_eval[:,1:],'-',linewidth=1))
         
     #max_eval = 1.2*np.max(costs_eval)
     #for sample_eval in samples_eval:
@@ -108,7 +113,7 @@ def plotLearningCurve(learning_curve,ax,costs_all=[],cost_labels=[]):
     
     if len(cost_labels)>0:
         cost_labels.insert(0,'total cost')
-        plt.legend(lines, cost_labels)
+        plt.legend(lines, cost_labels, loc= 'center right')
 
     y_limits = [0,1.2*np.max(costs_eval)]
     plotUpdateLines(samples_eval,ax,y_limits)

@@ -54,11 +54,18 @@ if __name__=="__main__":
     axs = [ fig.add_subplot(1,n_subplots,ii+1) for ii in range(n_subplots) ]
         
     dirs = sorted(glob.glob(directory+"/rollout*"))
+    rollout_number = 1
     for cur_dir in dirs:
         #plotTrajectoryFromFile(cur_dir+"/cost_vars.txt",axs[1:4])
         if task:
             cost_vars = np.loadtxt(cur_dir+"/cost_vars.txt")
             task.plotRollout(cost_vars,axs[0])
-
-    plt.show()        
+            axs[0].lines[-1].set_label('Rollout ' + str(rollout_number))
+            rollout_number += 1
+    axs[0].legend()
+    axs[0].set_title("Mean accelerations during rollouts")
+    # custom_xlim = (0, 13.6)
+    # custom_ylim = (-1, 2)
+    # plt.setp(axs, xlim=custom_xlim, ylim=custom_ylim)
     fig.savefig(directory+'/exploration_rollouts.png')
+    plt.show()        
