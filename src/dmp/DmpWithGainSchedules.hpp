@@ -168,15 +168,6 @@ public:
     return function_approximators_gains_.size();
   }
 
-<<<<<<< HEAD
-  // void getSelectableParameters(std::set<std::string>& selectable_values_labels) const;
-  // void setSelectedParameters(const std::set<std::string>& selected_values_labels);
-
-  // int getParameterVectorAllSize(void) const;
-  // void getParameterVectorAll(Eigen::VectorXd& values) const;
-  // void setParameterVectorAll(const Eigen::VectorXd& values);
-  // void getParameterVectorMask(const std::set<std::string> selected_values_labels, Eigen::VectorXi& selected_mask) const;
-=======
   virtual int getParameterVectorSize(void) const;  void getSelectableParameters(std::set<std::string>& selectable_values_labels) const;
   virtual void setSelectedParameters(const std::set<std::string>& selected_values_labels);
 
@@ -184,7 +175,6 @@ public:
   virtual void setParameterVector(const Eigen::VectorXd& values, bool normalized=false);
   //virtual void setParameterVector(const std::vector<Eigen::VectorXd>& vector_values, bool normalized=false);
   bool isParameterSelected(std::string label) const;
->>>>>>> origin/cpp_parameterizable
   
   /** Compute the outputs of the function approximators.
    * \param[in] phase_state The phase states for which the outputs are computed.

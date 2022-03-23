@@ -282,36 +282,6 @@ void DmpWithGainSchedules::train(const Trajectory& trajectory, std::string save_
 }
 
 
-<<<<<<< HEAD
-// void DmpWithGainSchedules::getSelectableParameters(set<string>& selectable_values_labels) const {
-  
-//   Dmp::getSelectableParameters(selectable_values_labels);
-  
-//   std::set<std::string>::iterator it;
-//   for (int dd=0; dd<dim_orig(); dd++)
-//   {
-//     if (function_approximators_gains_[dd]!=NULL)
-//     {
-//       if (function_approximators_gains_[dd]->isTrained())
-//       {
-//         set<string> cur_labels;
-//         function_approximators_gains_[dd]->getSelectableParameters(cur_labels);
-
-//         for (it = cur_labels.begin(); it != cur_labels.end(); it++)
-//         { 
-//           string str = *it;
-//           str += "_gains";
-//           selectable_values_labels.insert(str);
-//         }
-        
-//       }
-//     }
-//   }
-//   //cout << "selected_values_labels=["; 
-//   //for (string label : selected_values_labels) 
-//   //  cout << label << " ";
-//   //cout << "]" << endl;
-=======
 void DmpWithGainSchedules::getSelectableParameters(set<string>& selectable_values_labels) const {
   
   // Get the selectable parameters from the dmp
@@ -345,90 +315,9 @@ void DmpWithGainSchedules::getSelectableParameters(set<string>& selectable_value
   for (string label : selectable_values_labels) 
     cout << label << " ";
   cout << "]" << endl;
->>>>>>> origin/cpp_parameterizable
   
-// }
+ }
 
-<<<<<<< HEAD
-// void DmpWithGainSchedules::setSelectedParameters(const set<string>& selected_values_labels)
-// {
-//   Dmp::setSelectedParameters(selected_values_labels);
-//   Eigen::VectorXi lengths_per_dimension_dmp = Dmp::getVectorLengthsPerDimension();
-  
-//   Eigen::VectorXi lengths_per_dimension_gains(dim_gains());
-//   for (int dd=0; dd<dim_gains(); dd++)
-//   {
-//     if (function_approximators_gains_[dd]!=NULL)
-//     {
-//       if (function_approximators_gains_[dd]->isTrained())
-//       {
-//         function_approximators_gains_[dd]->setSelectedParameters(selected_values_labels);
-//         lengths_per_dimension_gains[dd] = function_approximators_gains_[dd]->getParameterVectorSelectedSize();
-//       }
-//     }
-//   }
-  
-//   VectorXi lengths_per_dimension(dim_orig()+dim_gains());
-//   lengths_per_dimension << lengths_per_dimension_dmp, lengths_per_dimension_gains;
-//   setVectorLengthsPerDimension(lengths_per_dimension);
-      
-// }
-
-// void DmpWithGainSchedules::getParameterVectorMask(const std::set<std::string> selected_values_labels, Eigen::VectorXi& selected_mask) const
-// {
-//   Dmp::getParameterVectorMask(selected_values_labels,selected_mask);
-//   assert(function_approximators_gains_.size()>0);
-//   for (int dd=0; dd<dim_orig(); dd++)
-//   {
-//     assert(function_approximators_gains_[dd]!=NULL);
-//     assert(function_approximators_gains_[dd]->isTrained());
-//   }
-
-//   selected_mask.resize(getParameterVectorAllSize());
-
-//   const int TMP_GOAL_NUMBER = -1;
-//   int offset = 0;
-//   VectorXi cur_mask;
-//   for (int dd=0; dd<dim_orig(); dd++)
-//   {
-//     function_approximators_gains_[dd]->getParameterVectorMask(selected_values_labels,cur_mask);
-
-//     // This makes sure that the indices for each function approximator are different    
-//     int mask_offset = selected_mask.maxCoeff(); 
-//     for (int ii=0; ii<cur_mask.size(); ii++)
-//       if (cur_mask[ii]!=0)
-//         cur_mask[ii] += mask_offset;
-        
-//     selected_mask.segment(offset,cur_mask.size()) = cur_mask;
-//     offset += cur_mask.size();
-    
-//     offset++;
-    
-//   }
-//   assert(offset == getParameterVectorAllSize());
-
-//   // Replace TMP_GOAL_NUMBER with current max value
-//   int goal_number = selected_mask.maxCoeff() + 1; 
-//   for (int ii=0; ii<selected_mask.size(); ii++)
-//     if (selected_mask[ii]==TMP_GOAL_NUMBER)
-//       selected_mask[ii] = goal_number;
-    
-// }
-
-// int DmpWithGainSchedules::getParameterVectorAllSize(void) const
-// {
-//   int total_size = Dmp::getParameterVectorAllSize();
-//   for (unsigned int dd=0; dd<function_approximators_gains_.size(); dd++)
-//     total_size += function_approximators_gains_[dd]->getParameterVectorAllSize();
-  
-//   return total_size;
-// }
-
-
-// void DmpWithGainSchedules::getParameterVectorAll(VectorXd& values) const
-// {
-//   Dmp::getParameterVectorAll(values);
-=======
 void DmpWithGainSchedules::setSelectedParameters(const set<string>& selected_values_labels)
 {
   Dmp::setSelectedParameters(selected_values_labels);
@@ -461,41 +350,9 @@ int DmpWithGainSchedules::getParameterVectorSize(void) const
 void DmpWithGainSchedules::getParameterVector(VectorXd& values, bool normalized) const
 {
   Dmp::getParameterVector(values);
->>>>>>> origin/cpp_parameterizable
 
-//   int offset = values.size();
+  int offset = values.size();
 
-<<<<<<< HEAD
-//   values.conservativeResize(getParameterVectorAllSize());
-  
-//   VectorXd cur_values;
-//   for (int dd=0; dd<dim_gains(); dd++)
-//   {
-//     function_approximators_gains_[dd]->getParameterVectorAll(cur_values);
-//     values.segment(offset,cur_values.size()) = cur_values;
-//     offset += cur_values.size();
-//   }
-// }
-
-// void DmpWithGainSchedules::setParameterVectorAll(const VectorXd& values)
-// {
-//   assert(values.size()==getParameterVectorAllSize());
-  
-//   int last_index = values.size(); // Offset at the end
-//   VectorXd cur_values;
-//   for (int dd=dim_gains()-1; dd>=0; dd--)
-//   {
-//     int n_parameters_required = function_approximators_gains_[dd]->getParameterVectorAllSize();
-//     cur_values = values.segment(last_index-n_parameters_required,n_parameters_required);
-//     function_approximators_gains_[dd]->setParameterVectorAll(cur_values);
-//     last_index -= n_parameters_required;
-//   }
-  
-//   VectorXd values_for_dmp = values.segment(0,last_index);
-//   Dmp::setParameterVectorAll(values);
-  
-// }
-=======
   values.conservativeResize(getParameterVectorSize());
   
   VectorXd cur_values;
@@ -559,7 +416,6 @@ void DmpWithGainSchedules::setParameterVector(const std::vector<Eigen::VectorXd>
   }
 }
 */
->>>>>>> origin/cpp_parameterizable
 
 
 }
