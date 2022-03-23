@@ -126,6 +126,8 @@ int main(int n_args, char** args)
   // Set the parameters to optimize
   set<string> parameters_to_optimize;
   parameters_to_optimize.insert("weights");
+  // Before the weights of the gains were not recognized
+  parameters_to_optimize.insert("weights_gains");
   
   // Clone the function approximator for each dimension of the DMP
   vector<FunctionApproximator*> function_approximators(n_dims);    
@@ -134,7 +136,6 @@ int main(int n_args, char** args)
   
   // Initialize the DMP
   Dmp* dmp = new Dmp(n_dims, function_approximators, Dmp::KULVICIUS_2012_JOINING);
-  dmp->set_name("trained");
 
   int n_gains = trajectory.dim_misc();
   // Clone the function approximator for each extra dimension of the DMP
