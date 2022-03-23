@@ -282,6 +282,7 @@ void DmpWithGainSchedules::train(const Trajectory& trajectory, std::string save_
 }
 
 
+<<<<<<< HEAD
 // void DmpWithGainSchedules::getSelectableParameters(set<string>& selectable_values_labels) const {
   
 //   Dmp::getSelectableParameters(selectable_values_labels);
@@ -310,9 +311,45 @@ void DmpWithGainSchedules::train(const Trajectory& trajectory, std::string save_
 //   //for (string label : selected_values_labels) 
 //   //  cout << label << " ";
 //   //cout << "]" << endl;
+=======
+void DmpWithGainSchedules::getSelectableParameters(set<string>& selectable_values_labels) const {
+  
+  // Get the selectable parameters from the dmp
+  Dmp::getSelectableParameters(selectable_values_labels);
+  
+  // Now add the ones related to the gains 
+  // Add "_gains" to the labels of the function approximators to distinguish them
+  // from the labels for the function approximators of the DMP
+  std::set<std::string>::iterator it;
+  for (int dd=0; dd<dim_orig(); dd++)
+  {
+    if (function_approximators_gains_[dd]!=NULL)
+    {
+      if (function_approximators_gains_[dd]->isTrained())
+      {
+        set<string> cur_labels;
+        function_approximators_gains_[dd]->getSelectableParameters(cur_labels);
+
+        for (it = cur_labels.begin(); it != cur_labels.end(); it++)
+        { 
+          string str = *it;
+          str += "_gains";
+          selectable_values_labels.insert(str);
+        }
+        
+      }
+    }
+  }
+  
+  cout << "selectable_values_labels=["; 
+  for (string label : selectable_values_labels) 
+    cout << label << " ";
+  cout << "]" << endl;
+>>>>>>> origin/cpp_parameterizable
   
 // }
 
+<<<<<<< HEAD
 // void DmpWithGainSchedules::setSelectedParameters(const set<string>& selected_values_labels)
 // {
 //   Dmp::setSelectedParameters(selected_values_labels);
@@ -391,9 +428,44 @@ void DmpWithGainSchedules::train(const Trajectory& trajectory, std::string save_
 // void DmpWithGainSchedules::getParameterVectorAll(VectorXd& values) const
 // {
 //   Dmp::getParameterVectorAll(values);
+=======
+void DmpWithGainSchedules::setSelectedParameters(const set<string>& selected_values_labels)
+{
+  Dmp::setSelectedParameters(selected_values_labels);
+  
+  set<string> labels_gains;
+  for (string label : selected_values_labels) {
+      if (label.find("_gains") != string::npos) {
+        label.substr(0,label.length()-6); // Remove '_gains' 
+        labels_gains.insert(label);
+      }
+  }
+      
+  for (int dd=0; dd<dim_gains(); dd++)
+    if (function_approximators_gains_[dd]!=NULL)
+      if (function_approximators_gains_[dd]->isTrained())
+        function_approximators_gains_[dd]->setSelectedParameters(labels_gains);
+}
+
+
+int DmpWithGainSchedules::getParameterVectorSize(void) const
+{
+  int size = Dmp::getParameterVectorSize();
+  
+  for (unsigned int dd=0; dd<function_approximators_gains_.size(); dd++)
+    size += function_approximators_gains_[dd]->getParameterVectorSize();
+  
+  return size;
+}
+
+void DmpWithGainSchedules::getParameterVector(VectorXd& values, bool normalized) const
+{
+  Dmp::getParameterVector(values);
+>>>>>>> origin/cpp_parameterizable
 
 //   int offset = values.size();
 
+<<<<<<< HEAD
 //   values.conservativeResize(getParameterVectorAllSize());
   
 //   VectorXd cur_values;
@@ -423,6 +495,71 @@ void DmpWithGainSchedules::train(const Trajectory& trajectory, std::string save_
 //   Dmp::setParameterVectorAll(values);
   
 // }
+=======
+  values.conservativeResize(getParameterVectorSize());
+  
+  VectorXd cur_values;
+  for (int dd=0; dd<dim_gains(); dd++)
+  {
+    function_approximators_gains_[dd]->getParameterVector(cur_values);
+    values.segment(offset,cur_values.size()) = cur_values;
+    offset += cur_values.size();
+  }
+}
+
+void DmpWithGainSchedules::setParameterVector(const VectorXd& values, bool normalized)
+{
+  assert(values.size()==getParameterVectorSize());
+
+  int n_params_for_dmp = Dmp::getParameterVectorSize();
+
+  VectorXd values_for_dmp = values.segment(0,n_params_for_dmp);
+  Dmp::setParameterVector(values_for_dmp);
+
+  int offset = n_params_for_dmp;
+  VectorXd cur_values;
+  for (int dd=dim_gains()-1; dd>=0; dd--)
+  {
+    int n_parameters_required = function_approximators_gains_[dd]->getParameterVectorSize();
+    cur_values = values.segment(offset,n_parameters_required);
+    function_approximators_gains_[dd]->setParameterVector(cur_values,normalized);
+    offset += n_parameters_required;
+  }
+  
+  
+}
+
+/*
+void DmpWithGainSchedules::setParameterVector(const std::vector<Eigen::VectorXd>& vector_values, bool normalized)
+{
+  VectorXd cur_values;
+  VectorXd attractor(dim_orig());
+  for (int dd=0; dd<dim_orig(); dd++)
+  {
+    cur_values = vector_values[dd];
+    
+    int n_fa_pars = function_approximators_[dd]->getParameterVectorSize();
+    if (isParameterSelected("goal")) {
+      assert(cur_values.size()==n_fa_pars+1);
+      // ggg Goal is not normalized
+      attractor(dd) = cur_values[n_fa_pars-1]; // goal is last value
+      cur_values = cur_values.head(n_fa_pars);
+      
+    } else {
+      assert(cur_values.size()==n_fa_pars);
+      
+    }
+    
+    function_approximators_[dd]->setParameterVector(cur_values,normalized);
+  }
+  
+  if (isParameterSelected("goal")) {
+    // Set the goal
+    set_attractor_state(attractor); 
+  }
+}
+*/
+>>>>>>> origin/cpp_parameterizable
 
 
 }

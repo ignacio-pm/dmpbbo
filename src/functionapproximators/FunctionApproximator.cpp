@@ -141,19 +141,6 @@ void FunctionApproximator::reTrain(const Eigen::Ref<const Eigen::MatrixXd>& inpu
 }
 
 
-void FunctionApproximator::getParameterVectorSelectedMinMax(Eigen::VectorXd& min, Eigen::VectorXd& max) const
-{
-  if (model_parameters_==NULL)
-  {
-    cerr << __FILE__ << ":" << __LINE__ << ": Warning: Trying to access model parameters of the function approximator, but it has not been trained yet. Returning empty parameter vector." << endl;
-    min.resize(0);
-    max.resize(0);
-    return;
-  }
-
-  model_parameters_->getParameterVectorSelectedMinMax(min,max);
-}
-
 /******************************************************************************/
 bool FunctionApproximator::checkModelParametersInitialized(void) const
 {
@@ -167,27 +154,27 @@ bool FunctionApproximator::checkModelParametersInitialized(void) const
 }
 
 /******************************************************************************/
-void FunctionApproximator::getParameterVectorSelected(VectorXd& values, bool normalized) const
+void FunctionApproximator::getParameterVector(VectorXd& values, bool normalized) const
 {
   if (checkModelParametersInitialized())
-    model_parameters_->getParameterVectorSelected(values, normalized);
+    model_parameters_->getParameterVector(values, normalized);
   else
     values.resize(0);
 }
 
 /******************************************************************************/
-int FunctionApproximator::getParameterVectorSelectedSize(void) const
+int FunctionApproximator::getParameterVectorSize(void) const
 {
   if (checkModelParametersInitialized())
-    return model_parameters_->getParameterVectorSelectedSize();
+    return model_parameters_->getParameterVectorSize();
   else 
     return 0; 
 }
 
-void FunctionApproximator::setParameterVectorSelected(const VectorXd& values, bool normalized) 
+void FunctionApproximator::setParameterVector(const VectorXd& values, bool normalized) 
 {
   if (checkModelParametersInitialized())
-    model_parameters_->setParameterVectorSelected(values, normalized);
+    model_parameters_->setParameterVector(values, normalized);
 }
 
 void FunctionApproximator::setSelectedParameters(const set<string>& selected_values_labels)
@@ -203,30 +190,6 @@ void FunctionApproximator::getSelectableParameters(set<string>& labels) const
   else
     labels.clear();
 }
-
-void FunctionApproximator::getParameterVectorMask(const std::set<std::string> selected_values_labels, Eigen::VectorXi& selected_mask) const {
-  if (checkModelParametersInitialized())
-    model_parameters_->getParameterVectorMask(selected_values_labels,selected_mask);
-  else
-    selected_mask.resize(0);
-  
-};
-int FunctionApproximator::getParameterVectorAllSize(void) const {
-  if (checkModelParametersInitialized())
-    return model_parameters_->getParameterVectorAllSize();
-  else
-    return 0;
-};
-void FunctionApproximator::getParameterVectorAll(Eigen::VectorXd& values) const {
-  if (checkModelParametersInitialized())
-    model_parameters_->getParameterVectorAll(values);    
-  else
-    values.resize(0);
-};
-void FunctionApproximator::setParameterVectorAll(const Eigen::VectorXd& values) {
-  if (checkModelParametersInitialized())
-    model_parameters_->setParameterVectorAll(values);
-};
 
 string FunctionApproximator::toString(void) const
 {
@@ -268,20 +231,10 @@ void FunctionApproximator::generateInputsGrid(const Eigen::VectorXd& min, const 
 
 bool FunctionApproximator::saveGridData(const VectorXd& min, const VectorXd& max, const VectorXi& n_samples_per_dim, string save_directory, bool overwrite) const
 {
-  if (save_directory.empty())
-    return true;
-  
-  //MatrixXd inputs;
-  //FunctionApproximator::generateInputsGrid(min, max, n_samples_per_dim, inputs);
-
   if (model_parameters_==NULL)
     return false;
-  UnifiedModel* mp_unified = model_parameters_->toUnifiedModel();
-  if (mp_unified==NULL)
-    return false;
 
-  return mp_unified->saveGridData(min,max,n_samples_per_dim,save_directory,overwrite);
-  
+  return model_parameters_->saveGridData(min,max,n_samples_per_dim,save_directory,overwrite);
 }
 
 void FunctionApproximator::train(const Eigen::Ref<const Eigen::MatrixXd>& inputs, const Eigen::Ref<const Eigen::MatrixXd>& targets, std::string save_directory, bool overwrite)
