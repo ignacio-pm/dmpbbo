@@ -17,7 +17,7 @@
 
 # ## Try rollout
 
-# rosrun franka_tool_handover rollout results/dmp.xml results/trajectory.txt results/policy_parameters.txt
+# rosrun franka_tool_handover rollout results/dmp.xml results/trajectory.txt results/executed_policy_parameters.txt
 # rosrun franka_tool_handover returnToInitial results/trajectory.txt
 
 # ################################
