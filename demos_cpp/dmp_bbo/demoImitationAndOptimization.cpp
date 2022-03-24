@@ -80,7 +80,7 @@ void runImitationAndOptimization(vector<FunctionApproximator*> function_approxim
   vector<DistributionGaussian*> distributions(n_dims);
   for (int i_dim=0; i_dim<n_dims; i_dim++)
   {
-    cout << mean_init_vec.transpose() << endl;
+    cout << mean_init_vec[i_dim].transpose() << endl;
     VectorXd mean_init = mean_init_vec[i_dim];
   
     MatrixXd covar_init = 1000.0*MatrixXd::Identity(mean_init.size(),mean_init.size());
