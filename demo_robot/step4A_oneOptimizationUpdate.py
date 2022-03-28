@@ -58,7 +58,7 @@ if __name__=="__main__":
     #updater = UpdaterCovarAdaptation(eliteness, weighting_method)
     updater_adaptation = UpdaterCovarAdaptation(eliteness, weighting_method,max_level,min_level,diag_only,learning_rate)
     
-    updater = updater_adaptation
+    updater = updater_decay
     
     n_samples_per_update = 5
     
