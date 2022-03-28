@@ -120,19 +120,21 @@ int main(int n_args, char** args)
   // Initialize some meta parameters for training RBFN function approximator
   int input_dim = 1;
   double intersection = 0.7;
-  MetaParametersRBFN* meta_parameters = new MetaParametersRBFN(input_dim,n_basis_functions,intersection);      
-  FunctionApproximatorRBFN* fa_lwr = new FunctionApproximatorRBFN(meta_parameters);  
+  MetaParametersRBFN* meta_parameters_rbfn = new MetaParametersRBFN(input_dim,n_basis_functions,intersection);      
+  FunctionApproximatorRBFN* fa_rbfn = new FunctionApproximatorRBFN(meta_parameters_rbfn);  
+  MetaParametersLWR* meta_parameters_lwr = new MetaParametersLWR(input_dim,15,intersection);      
+  FunctionApproximatorLWR* fa_lwr = new FunctionApproximatorLWR(meta_parameters_lwr);  
   
   // Set the parameters to optimize
   set<string> parameters_to_optimize;
   parameters_to_optimize.insert("weights");
   // Before the weights of the gains were not recognized
-  parameters_to_optimize.insert("weights_gains");
-  
+  parameters_to_optimize.insert("offsets_gains");
+  parameters_to_optimize.insert("slopes_gains");
   // Clone the function approximator for each dimension of the DMP
   vector<FunctionApproximator*> function_approximators(n_dims);    
   for (int dd=0; dd<n_dims; dd++)
-    function_approximators[dd] = fa_lwr->clone();
+    function_approximators[dd] = fa_rbfn->clone();
   
   // Initialize the DMP
   Dmp* dmp = new Dmp(n_dims, function_approximators, Dmp::KULVICIUS_2012_JOINING);
@@ -166,10 +168,11 @@ int main(int n_args, char** args)
   saveMatrix(output_parameters_file,parameter_vector,overwrite);
   
   cout << "C++    |     Finished Training" << endl;
-    
-  delete meta_parameters;
+  
+  delete meta_parameters_rbfn;
+  delete meta_parameters_lwr;
+  delete fa_rbfn;
   delete fa_lwr;
-  delete dmp;
   delete dmp_gains;
 
   return 0;
