@@ -101,9 +101,8 @@ int main(int n_args, char** args)
   cout << endl;
   
   cout << "C++    |     Reading trajectory from file: " << input_trajectory_file << endl;
-  // n_dims_misc == n_dims_k_gains
-  int n_dims_misc = 7;
-  Trajectory trajectory = Trajectory::readFromFile(input_trajectory_file, n_dims_misc);
+  int n_gains = 7;
+  Trajectory trajectory = Trajectory::readFromFile(input_trajectory_file, n_gains);
   if (trajectory.length()==0)
   {
     cerr << "ERROR: The file " << input_trajectory_file << " could not be found. Aborting." << endl << endl;
@@ -122,15 +121,7 @@ int main(int n_args, char** args)
   double intersection = 0.7;
   MetaParametersRBFN* meta_parameters_rbfn = new MetaParametersRBFN(input_dim,n_basis_functions,intersection);      
   FunctionApproximatorRBFN* fa_rbfn = new FunctionApproximatorRBFN(meta_parameters_rbfn);  
-  MetaParametersLWR* meta_parameters_lwr = new MetaParametersLWR(input_dim,15,intersection);      
-  FunctionApproximatorLWR* fa_lwr = new FunctionApproximatorLWR(meta_parameters_lwr);  
   
-  // Set the parameters to optimize
-  set<string> parameters_to_optimize;
-  parameters_to_optimize.insert("weights");
-  // Before the weights of the gains were not recognized
-  parameters_to_optimize.insert("offsets_gains");
-  parameters_to_optimize.insert("slopes_gains");
   // Clone the function approximator for each dimension of the DMP
   vector<FunctionApproximator*> function_approximators(n_dims);    
   for (int dd=0; dd<n_dims; dd++)
@@ -138,42 +129,66 @@ int main(int n_args, char** args)
   
   // Initialize the DMP
   Dmp* dmp = new Dmp(n_dims, function_approximators, Dmp::KULVICIUS_2012_JOINING);
-
-  int n_gains = trajectory.dim_misc();
-  // Clone the function approximator for each extra dimension of the DMP
-  vector<FunctionApproximator*> function_approximators_gains(n_gains);    
-  for (int dd=0; dd<n_gains; dd++)
-    function_approximators_gains[dd] = fa_lwr->clone();
-  
-  DmpWithGainSchedules* dmp_gains = new DmpWithGainSchedules(dmp,function_approximators_gains);
-
-  cout << "C++    |     Training Dmp... (n_basis_functions=" << n_basis_functions << ")" << endl;
-  bool overwrite = true;
-  dmp_gains->train(trajectory,output_train_directory,overwrite);
-
   // Set which parameters to optimize
-  dmp_gains->setSelectedParameters(parameters_to_optimize);
-  
-  cout << "C++    |     Writing trained Dmp with Impedance Gains to XML file: " << output_dmp_file << endl;
+  set<string> parameters_to_optimize;
+  parameters_to_optimize.insert("weights"); // Optimize trajectory
+  // Initialize variable for dmp training with or without gains
+  bool overwrite = true;
+  Eigen::VectorXd parameter_vector;
   std::ofstream ofs(output_dmp_file);
   boost::archive::xml_oarchive oa(ofs);
-  oa << boost::serialization::make_nvp("dmp",dmp_gains);
-  ofs.close();
+  bool with_gains = true;
+  if (with_gains) {
+    MetaParametersLWR* meta_parameters_lwr = new MetaParametersLWR(input_dim, n_basis_functions,intersection);      
+    FunctionApproximatorLWR* fa_lwr = new FunctionApproximatorLWR(meta_parameters_lwr); 
+
+    // Clone the function approximator for each extra dimension of the DMP
+    vector<FunctionApproximator*> function_approximators_gains(n_gains);      
+    for (int dd=0; dd<n_gains; dd++)
+      function_approximators_gains[dd] = fa_lwr->clone();  
+    
+    DmpWithGainSchedules* dmp_gains = new DmpWithGainSchedules(dmp,function_approximators_gains);
+
+    cout << "C++    |     Training Dmp with gains (n_basis_functions=" << n_basis_functions << ")" << endl;
+    overwrite = true;
+    dmp_gains->train(trajectory,output_train_directory,overwrite);
+
+    // Add gain parameters
+    parameters_to_optimize.insert("offsets_gains");
+    parameters_to_optimize.insert("slopes_gains");
+    // Set the parameters to optimize
+    dmp_gains->setSelectedParameters(parameters_to_optimize);
+    
+    cout << "C++    |     Writing trained Dmp with Impedance Gains to XML file: " << output_dmp_file << endl;
+    oa << boost::serialization::make_nvp("dmp",dmp_gains);
+    ofs.close();
+    
+    // Save the initial parameter vector to file
+    dmp_gains->getParameterVector(parameter_vector);
+    delete dmp_gains;
+    delete meta_parameters_lwr;
+    delete fa_lwr;
+  }
+  else {
+    cout << "C++    |     Training Dmp... (n_basis_functions=" << n_basis_functions << ")" << endl;
+    overwrite = true;
+    dmp->train(trajectory,output_train_directory,overwrite);
+    dmp->setSelectedParameters(parameters_to_optimize);
   
-  // Save the initial parameter vector to file
-  Eigen::VectorXd parameter_vector;
-  dmp_gains->getParameterVector(parameter_vector);
+    cout << "C++    |     Writing trained Dmp to XML file: " << output_dmp_file << endl;
+    oa << boost::serialization::make_nvp("dmp",dmp);
+    ofs.close();
+
+    dmp->getParameterVector(parameter_vector);
+    delete dmp;
+  }
   overwrite = true;
   cout << "C++    |     Writing initial parameter vector to file : " << output_parameters_file << endl;
   saveMatrix(output_parameters_file,parameter_vector,overwrite);
   
-  cout << "C++    |     Finished Training" << endl;
-  
   delete meta_parameters_rbfn;
-  delete meta_parameters_lwr;
   delete fa_rbfn;
-  delete fa_lwr;
-  delete dmp_gains;
-
+    
+  cout << "C++    |     Finished Training" << endl;
   return 0;
 }
