@@ -17,13 +17,13 @@ class TaskPickTool(Task):
         self.n_dims_wrench = 6
     
     def costLabels(self):
-        return ['completion','time','forces','acceleration']
+        return ['completion','time','forces','efforts']
 
     def evaluateRollout(self,cost_vars,sample):
         n_time_steps = cost_vars.shape[0] - 1
         # This parameters are task dependent
         max_time = 8.0
-        max_wrench = 100
+        max_wrench = 70
         max_acc = 3000
         
         ts = cost_vars[:-1,0]
@@ -38,8 +38,6 @@ class TaskPickTool(Task):
         
         sum_acc = np.sum(np.square(accelerations)) / n_time_steps
         sum_wrenches = np.sum(np.square(wrenches)) / n_time_steps
-        print(sum_acc)
-        print(max_acc)
             
         costs = np.zeros(1+4)
         costs[1] = self.weights_[0] * not_completion

@@ -8,7 +8,7 @@ from TaskPickTool import *
 
 if __name__ == '__main__':
     if len(sys.argv) == 2: 
-        task_object = TaskPickTool()
+        task_object = TaskPickTool([0.3, 0.3, 0.2, 0.2])
         directory = sys.argv[1]
         print(len([i for i, j, k in os.walk(directory)])-1)
         for l in range(len([i for i, j, k in os.walk(directory)])-1):
