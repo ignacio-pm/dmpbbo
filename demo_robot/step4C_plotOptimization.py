@@ -42,8 +42,9 @@ if __name__=="__main__":
     
     # Plot the optimization results (from the files saved to disk)
     golden_ratio = 1.618 # graphs have nice proportions with this ratio
-    n_subplots = 4
-    fig = plt.figure(3,figsize=(golden_ratio*n_subplots*3,3))
+    n_subplots = 1
+    fig = plt.figure(1,figsize=(golden_ratio*n_subplots*3,3))
+    fig.subplots_adjust(right=0.2) 
     plotOptimizationRolloutsTask(directory,fig,task)
     plt.tight_layout()
     plt.show()
