@@ -63,12 +63,12 @@
  
 for i in {0..5}
 do
-  python3 step4A_oneOptimizationUpdate.py results/experiment_4/
-  ./step4B_performRollouts.bash results/experiment_4/  
+  python3 step4A_oneOptimizationUpdate.py results/experiment_3/
+  ./step4B_performRollouts.bash results/experiment_3/  
 done
 
 # Plot intermediate results (after 10 updates)
-python3 step4C_plotOptimization.py results/experiment_4/
+python3 step4C_plotOptimization.py results/experiment_3/
 
 # for i in {0..4}
 # do
