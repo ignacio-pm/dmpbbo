@@ -137,7 +137,7 @@ int main(int n_args, char** args)
   Eigen::VectorXd parameter_vector;
   std::ofstream ofs(output_dmp_file);
   boost::archive::xml_oarchive oa(ofs);
-  bool with_gains = true;
+  bool with_gains = false;
   if (with_gains) {
     MetaParametersLWR* meta_parameters_lwr = new MetaParametersLWR(input_dim, n_basis_functions,intersection);      
     FunctionApproximatorLWR* fa_lwr = new FunctionApproximatorLWR(meta_parameters_lwr); 

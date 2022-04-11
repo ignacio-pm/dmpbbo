@@ -20,6 +20,26 @@
 # rosrun franka_tool_handover rollout results/dmp.xml results/trajectory.txt results/executed_policy_parameters.txt
 # rosrun franka_tool_handover returnToInitial results/trajectory.txt
 
+# get the plots of the experiment 3
+
+# echo "bash   | Calling rosrun rollout results/policy_parameters.txt results/dmp.xml" &
+# rosrun franka_tool_handover rollout results/experiment_3/final/dmp.xml results/experiment_3/final/trajectory.txt results/experiment_3/final/policy_parameters.txt results/experiment_3/final/dmp.xml &
+# echo "bash   | Calling rosrun create_cost_vars.py results/cost_vars.txt" &
+# rosrun franka_tool_handover create_cost_vars.py results/experiment_3/final/cost_vars.txt &
+# # rosrun franka_tool_handover handPub open &
+# # echo "bash   | Calling rosrun handPub open" &
+# wait
+
+# sleep 0.5
+
+# echo "bash   | Calling rosrun returnToInitial results/trajectory.txt"
+# rosrun franka_tool_handover returnToInitial results/experiment_3/final/trajectory.txt
+# rosrun franka_tool_handover plot_trajectories.py cost_vars results/experiment_3/final
+
+# sleep 6
+# echo "bash   | Calling rosrun franka_tool_handover handPub close"
+# rosrun franka_tool_handover handPub close
+
 # ################################
 # # STEP 3: Tune the exploration noise
 
@@ -43,12 +63,12 @@
  
 for i in {0..5}
 do
-  python3 step4A_oneOptimizationUpdate.py results/experiment_29_03/
-  ./step4B_performRollouts.bash results/experiment_29_03/  
+  python3 step4A_oneOptimizationUpdate.py results/experiment_4/
+  ./step4B_performRollouts.bash results/experiment_4/  
 done
 
 # Plot intermediate results (after 10 updates)
-python3 step4C_plotOptimization.py results/experiment_29_03/
+python3 step4C_plotOptimization.py results/experiment_4/
 
 # for i in {0..4}
 # do
