@@ -56,17 +56,18 @@ class TaskPickTool(Task):
         sum_acc = np.mean(np.square(accelerations), axis=1)
     
         # line_handles = ax.plot(t, sum_wrenches,linewidth=0.5, label="Wrenches")
-        colors = plt.cm.jet(np.linspace(0, 1, 100))
-        line_handles_acc = ax.plot(t, sum_acc, linewidth=0.5, color=colors[np.random.randint(100)])
+        colors = plt.cm.Blues(np.linspace(0, 1, 30))
+        if(np.amin(sum_acc) > 50):
+            line_handles_acc = ax.plot(t, sum_acc, linewidth=0.5, color=colors[5+len(ax.lines)])
 
-        # line_handles.extend(line_handles_acc)
+            # line_handles.extend(line_handles_acc)
 
-        # ax.axis('equal')
-        ax.set_xlabel('Time')
-        ax.set_ylabel('Nm')
-        ax.set_ylim([0.0, 700.0])
-        ax.set_xlim([0.0, 13.6])
-        ax.set_title("Mean of the joint efforts  the rollouts")
-        # ax.legend()
-            
-        return line_handles_acc
+            # ax.axis('equal')
+            ax.set_xlabel('Time')
+            ax.set_ylabel('Nm')
+            ax.set_ylim([0.0, 600.0])
+            ax.set_xlim([0.0, 13.6])
+            ax.set_title("Evolution of the mean joint efforts during the optimization")
+            # ax.legend()
+                
+            return line_handles_acc

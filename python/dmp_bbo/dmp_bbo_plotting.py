@@ -117,8 +117,8 @@ def plotOptimizationRollouts(directory,fig,plotRollout=None,plot_all_rollouts=Fa
         i_subplot = 1
         if plotRollout:
             n_subplots = 4
-            # ax_rollout = fig.add_subplot(1,n_subplots,i_subplot)
-            i_subplot += 1
+            # ax_rollout = fig.add_subplot(1,1,1)
+            # i_subplot += 1
             # h = plotRollout(rollout_eval.cost_vars,ax_rollout)
             # setColor(h,i_update,n_updates)
             
