@@ -117,9 +117,9 @@ def plotOptimizationRollouts(directory,fig,plotRollout=None,plot_all_rollouts=Fa
         i_subplot = 1
         if plotRollout:
             n_subplots = 4
-            ax_rollout = fig.add_subplot(1,1,1)
-            i_subplot += 1
-            h = plotRollout(rollout_eval.cost_vars,ax_rollout)
+            # ax_rollout = fig.add_subplot(1,1,1)
+            # i_subplot += 1
+            # h = plotRollout(rollout_eval.cost_vars,ax_rollout)
             # setColor(h,i_update,n_updates)
             
          
@@ -131,7 +131,7 @@ def plotOptimizationRollouts(directory,fig,plotRollout=None,plot_all_rollouts=Fa
         
     
     # plotExplorationCurve(exploration_curve,fig.add_subplot(1,n_subplots,i_subplot))
-    # plotLearningCurve(learning_curve,fig.add_subplot(1,1,1),all_costs,cost_labels)
+    plotLearningCurve(learning_curve,fig.add_subplot(1,1,1),all_costs,cost_labels)
 
 #def plotOptimizations(directories,axs):
 #    n_updates = 10000000
