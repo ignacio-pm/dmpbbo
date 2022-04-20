@@ -33,6 +33,6 @@ do
 
   sleep 6
   echo "bash   | Calling rosrun franka_tool_handover handPub close"
-  rosrun franka_tool_handover handPub close
+  rosrun franka_tool_handover handPub open
 
 done
