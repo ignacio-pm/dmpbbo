@@ -6,6 +6,7 @@ fi
 INPUT_DMP=$1
 DIRECTORY=$2
 
+# Change depending to the location of the catkin workspace
 source /home/panda/Documents/Ignacio/catkin_ws/devel_isolated/setup.bash
 
 # Get the rollout directory within the update directory
@@ -21,8 +22,6 @@ do
   rosrun franka_tool_handover rollout $INPUT_DMP $CUR_DIR/trajectory.txt $CUR_DIR/policy_parameters.txt $CUR_DIR/dmp.xml &
   echo "bash   | Calling rosrun create_cost_vars.py $CUR_DIR/cost_vars.txt" &
   rosrun franka_tool_handover create_cost_vars.py $CUR_DIR/cost_vars.txt &
-  # rosrun franka_tool_handover handPub open &
-  # echo "bash   | Calling rosrun handPub open" &
   wait
 
   sleep 0.5
@@ -31,8 +30,16 @@ do
   rosrun franka_tool_handover returnToInitial $CUR_DIR/trajectory.txt
   rosrun franka_tool_handover plot_trajectories.py cost_vars $CUR_DIR
 
-  sleep 6
-  echo "bash   | Calling rosrun franka_tool_handover handPub close"
-  rosrun franka_tool_handover handPub close
+  if [[ "$CUR_DIR" == *"receiver"* ]]; then
+    sleep 3
+    echo "bash   | Calling rosrun franka_tool_handover handPub close"
+    rosrun franka_tool_handover handPub qbhand2 open
+    sleep 3
+  else
+    sleep 6
+    echo "bash   | Calling rosrun franka_tool_handover handPub close"
+    rosrun franka_tool_handover handPub qbhand1 close
+
+  fi
 
 done

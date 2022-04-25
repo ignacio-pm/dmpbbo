@@ -61,14 +61,14 @@
 ################################
 # STEP 4: Run the optimization
  
-for i in {0..5}
+for i in {0..1}
 do
-  python3 step4A_oneOptimizationUpdate.py results/experiment_3/
-  ./step4B_performRollouts.bash results/experiment_3/  
+  python3 step4A_oneOptimizationUpdate.py results/experiment_p/
+  ./step4B_performRollouts.bash results/experiment_p/  
 done
 
 # Plot intermediate results (after 10 updates)
-python3 step4C_plotOptimization.py results/experiment_3/
+# python3 step4C_plotOptimization.py results/experiment_p/
 
 # for i in {0..4}
 # do
@@ -78,3 +78,13 @@ python3 step4C_plotOptimization.py results/experiment_3/
 
 # # Plot results (after 8 updates)
 # python3 step4C_plotOptimization.py results/
+
+for i in {0..9}
+do
+  python3 step4A_oneOptimizationUpdate.py results/experiment_giver/
+  python3 step4A_oneOptimizationUpdate.py results/experiment_rec/
+  ./step4B_performRollouts_2Robots.bash results/experiment_giver/ results/experiment_rec/ 
+done
+
+# Plot intermediate results (after 10 updates)
+# python3 step4C_plotOptimization.py results/experiment_p/
