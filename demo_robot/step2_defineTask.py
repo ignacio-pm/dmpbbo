@@ -26,7 +26,7 @@ import inspect
 lib_path = os.path.abspath('../python')
 sys.path.append(lib_path)
 
-from TaskPickTool import TaskPickTool
+from TaskHandoverTool import TaskHandoverTool
 
 
 if __name__=="__main__":
@@ -41,8 +41,8 @@ if __name__=="__main__":
     if (len(sys.argv)>1):
         output_task_file = sys.argv[1]
 
-    weights = [0.3, 0.3, 0.2, 0.2]
-    task = TaskPickTool(weights)
+    weights = [0.4, 0.2, 0.2, 0.2]
+    task = TaskHandoverTool(weights)
     
     # Save the task instance itself
     print('  * Saving task to file "'+output_task_file+"'")

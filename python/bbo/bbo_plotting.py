@@ -110,11 +110,11 @@ def plotLearningCurve(learning_curve,ax,costs_all=[],cost_labels=[]):
     ax.set_xlabel('number of evaluations')
     ax.set_ylabel('cost')
     ax.set_title('Learning curve')
-    print(cost_mean[-1,0])
-    print(cost_mean[0,:])
-    print(cost_mean[9,:])
-    print(cost_mean[10,:])
-    print(cost_mean[-1,:])
+    # print(cost_mean[-1,0])
+    # print(cost_mean[0,:])
+    # print(cost_mean[9,:])
+    # print(cost_mean[10,:])
+    # print(cost_mean[-1,:])
     
     if len(cost_labels)>0:
         cost_labels.insert(0,'total cost')

@@ -139,7 +139,7 @@ int main(int n_args, char** args)
   boost::archive::xml_oarchive oa(ofs);
   bool with_gains = true;
   if (with_gains) {
-    MetaParametersLWR* meta_parameters_lwr = new MetaParametersLWR(input_dim, n_basis_functions,intersection);      
+    MetaParametersLWR* meta_parameters_lwr = new MetaParametersLWR(input_dim, 4,intersection);      
     FunctionApproximatorLWR* fa_lwr = new FunctionApproximatorLWR(meta_parameters_lwr); 
 
     // Clone the function approximator for each extra dimension of the DMP
@@ -149,7 +149,7 @@ int main(int n_args, char** args)
     
     DmpWithGainSchedules* dmp_gains = new DmpWithGainSchedules(dmp,function_approximators_gains);
 
-    cout << "C++    |     Training Dmp with gains (n_basis_functions=" << n_basis_functions << ")" << endl;
+    cout << "C++    |     Training Dmp with gains (n_basis_functions= 4)" << endl;
     overwrite = true;
     dmp_gains->train(trajectory,output_train_directory,overwrite);
 

@@ -6,6 +6,7 @@ fi
 INPUT_DMP=$1
 DIRECTORY=$2
 
+# Change depending to the location of the catkin workspace
 source /home/panda/Documents/Ignacio/catkin_ws/devel_isolated/setup.bash
 
 # Get the rollout directory within the update directory
@@ -17,12 +18,14 @@ sleep 2
 # Call execute dmp for each rollout
 for CUR_DIR in $ROLLOUT_DIRS
 do
+  echo "bash   | Calling rosrun franka_tool_handover handPub close"
+  rosrun franka_tool_handover handPub close
+  echo "bash   | Waiting for receiver"
+  read -p "Press any key to execute roll-out. " -n1 -s
   echo "bash   | Calling rosrun rollout $INPUT_DMP $CUR_DIR/policy_parameters.txt $CUR_DIR/dmp.xml" &
   rosrun franka_tool_handover rollout $INPUT_DMP $CUR_DIR/trajectory.txt $CUR_DIR/policy_parameters.txt $CUR_DIR/dmp.xml &
   echo "bash   | Calling rosrun create_cost_vars.py $CUR_DIR/cost_vars.txt" &
   rosrun franka_tool_handover create_cost_vars.py $CUR_DIR/cost_vars.txt &
-  # rosrun franka_tool_handover handPub open &
-  # echo "bash   | Calling rosrun handPub open" &
   wait
 
   sleep 0.5
