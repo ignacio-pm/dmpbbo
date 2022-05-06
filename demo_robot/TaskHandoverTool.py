@@ -30,6 +30,7 @@ class TaskHandoverTool(Task):
         wrenches = cost_vars[:-1,1:1+self.n_dims_wrench] 
         accelerations = cost_vars[:-1,1+self.n_dims_wrench:1+self.n_dims_wrench+self.n_dims]
         handover_duration = cost_vars[-1,0]
+        print(handover_duration)
         if handover_duration < max_time and handover_duration > 3:
             time = handover_duration
             not_completion = 0
@@ -72,7 +73,7 @@ class TaskHandoverTool(Task):
             ax.set_xlabel('Time')
             ax.set_ylabel('Nm')
             ax.set_ylim([0.0, 600.0])
-            ax.set_xlim([0.0, 13.6])
+            ax.set_xlim([0.0, 9.4])
             ax.set_title("Evolution of the mean joint efforts during the optimization")
             # ax.legend()
                 

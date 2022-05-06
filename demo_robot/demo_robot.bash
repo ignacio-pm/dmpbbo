@@ -18,28 +18,24 @@
 
 # ## Try rollout
 
-# rosrun franka_tool_handover rollout results/experiment_giver/dmp.xml results/experiment_giver/try_rollout/trajectory.txt
-# rosrun franka_tool_handover returnToInitial results/experiment_giver/trajectory.txt
+# rosrun franka_tool_handover rollout results/experiment_giver/dmp.xml results/experiment_giver/final/trajectory.txt
+# rosrun franka_tool_handover returnToInitial results/experiment_giver/final/trajectory.txt
 
-# get the plots of the experiment 3
+echo "bash   | Calling rosrun rollout results/experiment_giver/final/dmp.xml results/experiment_giver/final/trajectory.txt" &
+rosrun franka_tool_handover rollout results/experiment_giver/final/dmp.xml results/experiment_giver/final/trajectory.txt &
+echo "bash   | Calling rosrun create_cost_vars.py results/experiment_giver/final/cost_vars.txt" &
+rosrun franka_tool_handover create_cost_vars.py results/experiment_giver/final/cost_vars.txt &
+wait
 
-# echo "bash   | Calling rosrun rollout results/experiment_giver/dmp.xml results/experiment_giver/try_rollout/trajectory.txt" &
-# rosrun franka_tool_handover rollout results/experiment_giver/dmp.xml results/experiment_giver/try_rollout/trajectory.txt &
-# echo "bash   | Calling rosrun create_cost_vars.py results/cost_vars.txt" &
-# rosrun franka_tool_handover create_cost_vars.py results/experiment_giver/try_rollout/cost_vars.txt &
-# # rosrun franka_tool_handover handPub open &
-# # echo "bash   | Calling rosrun handPub open" &
-# wait
+sleep 0.5
 
-# sleep 0.5
+echo "bash   | Calling rosrun returnToInitial results/experiment_giver/trajectory.txt"
+rosrun franka_tool_handover returnToInitial results/experiment_giver/final/trajectory.txt
+rosrun franka_tool_handover plot_trajectories.py cost_vars results/experiment_giver/final/
 
-# echo "bash   | Calling rosrun returnToInitial results/experiment_giver/trajectory.txt"
-# rosrun franka_tool_handover returnToInitial results/experiment_giver/try_rollout/trajectory.txt
-# rosrun franka_tool_handover plot_trajectories.py cost_vars results/experiment_giver/try_rollout
-
-# sleep 6
-# echo "bash   | Calling rosrun franka_tool_handover handPub close"
-# rosrun franka_tool_handover handPub close
+sleep 6
+echo "bash   | Calling rosrun franka_tool_handover handPub close"
+rosrun franka_tool_handover handPub close
 
 # ################################
 # # STEP 3: Tune the exploration noise
@@ -47,7 +43,7 @@
 # # Generate some samples to tune the exploration, run the dmp, and plot the results
 # # The penultimate parameters is the magnitude of the exploration. Here we try three values
 
-# python3 step3A_tuneExploration.py results/experiment_giver/policy_parameters.txt results/experiment_giver/distribution_initial_covar.txt results/experiment_giver/tune_exploration_3.0/ 3.0 10
+# python3 step3A_tuneExploration.py results/experiment_giver/policy_parameters.txt results/experiment_giver/distribution_initial_covar.txt results/experiment_giver/tune_exploration_3.0/ 3.0 4
 # ./step3B_performExplorationRollouts.bash results/experiment_giver/dmp.xml results/experiment_giver/tune_exploration_3.0/
 # python3 step3C_tuneExplorationPlot.py results/experiment_giver/tune_exploration_3.0/ results/experiment_giver/TaskHandoverTool.p
 
@@ -59,21 +55,21 @@
 # ./step3B_performExplorationRollouts.bash results/experiment_giver/dmp.xml results/experiment_giver/tune_exploration_7.0/
 # python3 step3C_tuneExplorationPlot.py results/experiment_giver/tune_exploration_7.0/ results/experiment_giver/TaskHandoverTool.p
 
-# python3 step3A_tuneExploration.py results/experiment_giver/policy_parameters.txt results/experiment_giver/distribution_initial_covar.txt results/experiment_giver/tune_exploration_10.0/ 10.0 10
+# python3 step3A_tuneExploration.py results/experiment_giver/policy_parameters.txt results/experiment_giver/distribution_initial_covar.txt results/experiment_giver/tune_exploration_10.0/ 10.0 2
 # ./step3B_performExplorationRollouts.bash results/experiment_giver/dmp.xml results/experiment_giver/tune_exploration_10.0/
 # python3 step3C_tuneExplorationPlot.py results/experiment_giver/tune_exploration_10.0/ results/experiment_giver/TaskHandoverTool.p
 
 ################################
 # STEP 4: Run the optimization
  
-for i in {0..5}
-do
-  python3 step4A_oneOptimizationUpdate.py results/experiment_giver/exploration_7/
-  ./step4B_performRollouts.bash results/experiment_giver/exploration_7/
-done
+# for i in {0..9}
+# do
+#   python3 step4A_oneOptimizationUpdate.py results/experiment_giver/vertical/
+#   ./step4B_performRollouts.bash results/experiment_giver/vertical/
+# done
 
-# Plot intermediate results (after 10 updates)
-python3 step4C_plotOptimization.py results/experiment_giver/exploration_7/
+# # Plot intermediate results (after 10 updates)
+# python3 step4C_plotOptimization.py results/experiment_giver/vertical/
 
 # for i in {0..4}
 # do
@@ -81,5 +77,5 @@ python3 step4C_plotOptimization.py results/experiment_giver/exploration_7/
 #   ./step4B_performRollouts.bash results/experiment_giver/  
 # done
 
-# # Plot results (after 8 updates)
+# # Plot results (after 15 updates)
 # python3 step4C_plotOptimization.py results/experiment_giver/
