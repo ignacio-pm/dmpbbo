@@ -73,7 +73,7 @@ if __name__=="__main__":
     initial_distribution = DistributionGaussian(mean_init, covar_init)
 
     # Load the task
-    task = pickle.load(open(directory+'/taskPickTool.p', "rb" ))
+    task = pickle.load(open(directory+'/TaskHandoverTool.p', "rb" ))
     
     # Execute one update
     i_update = runOptimizationTaskOneUpdate(directory, task, initial_distribution, updater, n_samples_per_update)

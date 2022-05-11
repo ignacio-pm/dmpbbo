@@ -9,7 +9,7 @@ sys.path.append(lib_path)
 
 from dmp_bbo.Task import Task
 
-class TaskPickTool(Task):
+class TaskHandoverTool(Task):
     
     def __init__(self, weigths=[0.6, 0.2, 0.1, 0.1]):
         self.weights_ = weigths
@@ -22,15 +22,16 @@ class TaskPickTool(Task):
     def evaluateRollout(self,cost_vars,sample):
         n_time_steps = cost_vars.shape[0] - 1
         # This parameters are task dependent
-        max_time = 8.0
+        max_time = 6.0
         max_wrench = 70
-        max_acc = 3000
+        max_acc = 2000
         
         ts = cost_vars[:-1,0]
         wrenches = cost_vars[:-1,1:1+self.n_dims_wrench] 
         accelerations = cost_vars[:-1,1+self.n_dims_wrench:1+self.n_dims_wrench+self.n_dims]
-        if cost_vars[-1,0] < max_time:
-            time = cost_vars[-1,0]
+        handover_duration = cost_vars[-1,0]
+        if handover_duration < max_time and handover_duration > 3:
+            time = handover_duration
             not_completion = 0
         else: 
             time = max_time
@@ -40,11 +41,16 @@ class TaskPickTool(Task):
         sum_wrenches = np.sum(np.square(wrenches)) / n_time_steps
             
         costs = np.zeros(1+4)
-        costs[1] = self.weights_[0] * not_completion
-        costs[2] = self.weights_[1] * time / max_time
-        costs[3] = self.weights_[2] * sum_wrenches / max_wrench
-        costs[4] = self.weights_[3] * sum_acc / max_acc
+        costs[1] = self.weights_[0] * min(not_completion, 1)
+        costs[2] = self.weights_[1] * min(time / max_time, 1)
+        costs[3] = self.weights_[2] * min(sum_wrenches / max_wrench, 1)
+        costs[4] = self.weights_[3] * min(sum_acc / max_acc, 1)
         costs[0] = np.sum(costs[1:])
+
+        # Error detected during the movement
+        if handover_duration < 0:
+            costs[0] = 1.0
+
         return costs
         
     def plotRollout(self,cost_vars,ax):
